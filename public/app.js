@@ -7,5 +7,10 @@ $(document).ready(function () {
         maxZoom: 18,
         id: 'openstreetmap'
     }).addTo(mymap);
+
+    for (var i=0; i < bscdata.marks.length; i++) {
+        var marker = L.marker([bscdata.marks[i].lat,bscdata.marks[i].lon]).addTo(mymap);
+        marker.bindPopup(bscdata.marks[i].name);
+    }
 }
 )
