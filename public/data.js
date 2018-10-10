@@ -1,5 +1,9 @@
 /* This file defines the static data for the BSC courses and marks */
 var bscdata = {
+    startview: {
+        latlon: [-33.820, 151.2649],
+        zoom: 14
+    },
     marks: [
         {
             id: 1,
