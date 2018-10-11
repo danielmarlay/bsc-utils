@@ -194,10 +194,142 @@ var bscdata = {
             depth: null
         }
 
+    ],
+    courses: [
+        {
+            id: 11,
+            name: "Mirror course 1",
+            classes: [
+                "Mirror"
+            ],
+            winds: [
+                "NE"
+            ],
+            startnear: 1,
+            finishnear: 2,
+            marks:     [  2,   3,   1,   2,   1,   2,   3,   1],
+            roundings: ["P", "P", "P", "P", "P", "P", "P", "P"]
+        },
+        {
+            id: 12,
+            name: "Mirror course 2",
+            classes: [
+                "Mirror"
+            ],
+            winds: [
+                "NW"
+            ],
+            startnear: 2,
+            finishnear: 4,
+            marks:     [  3,   1,   2,   3,   2,   3,   1,   2],
+            roundings: ["P", "P", "P", "P", "P", "P", "P", "P"]
+        },
+        {
+            id: 13,
+            name: "Mirror course 3",
+            classes: [
+                "Mirror"
+            ],
+            winds: [
+                "S",
+                "SW"
+            ],
+            startnear: 3,
+            finishnear: 5,
+            marks:     [  1,   4,   3,   1,   3,   1,   4,   3,   1,   3],
+            roundings: ["P", "P", "P", "P", "P", "P", "P", "P", "P", "P"]
+        },
+        {
+            id: 14,
+            name: "Mirror course 4",
+            classes: [
+                "Mirror"
+            ],
+            winds: [
+                "SE"
+            ],
+            startnear: 3,
+            finishnear: 1,
+            marks:     [  2,   1,   3,   2,   3,   2,   1,   3],
+            roundings: ["S", "S", "S", "S", "S", "S", "S", "S"]
+        },
+        {
+            id: 15,
+            name: "Mirror course 5",
+            classes: [
+                "Mirror"
+            ],
+            winds: [
+                "W",
+                "SW"
+            ],
+            startnear: 2,
+            finishnear: 1,
+            marks:     [  1,   3,   2,   1,   2,   1,   3,   2],
+            roundings: ["S", "S", "S", "S", "S", "S", "S", "S"]
+        },
+        {
+            id: 16,
+            name: "Mirror course 6",
+            classes: [
+                "Mirror"
+            ],
+            winds: [
+                "N"
+            ],
+            startnear: 1,
+            finishnear: 5,
+            marks:     [  3,   2,   1,   3,   1,   3,   2,   1],
+            roundings: ["S", "S", "S", "S", "S", "S", "S", "S"]
+        },
+        {
+            id: 17,
+            name: "Mirror course 7",
+            classes: [
+                "Mirror"
+            ],
+            winds: [
+                "E"
+            ],
+            startnear: 5,
+            finishnear: 2,
+            marks:     [  2,   1,   3,   2,   3,   2,   1,   3],
+            roundings: ["S", "S", "S", "S", "S", "S", "S", "S"]
+        }
     ]
 }
 
 for (var i = 0; i < bscdata.marks.length; i++) {
     bscdata.marks[i].lat = bscdata.marks[i].lat_d + (bscdata.marks[i].lat_m/60.0);
     bscdata.marks[i].lon = bscdata.marks[i].lon_d + (bscdata.marks[i].lon_m/60.0);
+}
+
+bscdata.classes = new Array();
+bscdata.winds = new Array();
+for (var i=0; i < bscdata.courses.length; i++) {
+    var course = bscdata.courses[i];
+    for (var j=0; j < course.classes.length; j++) {
+        var boatclass = course.classes[j];
+        var found = false;
+        for (var k=0; k < bscdata.classes.length; k++) {
+            if (boatclass == bscdata.classes[k]) {
+                found = true;
+            }
+        }
+        if (!found) {
+            bscdata.classes = bscdata.classes.concat(boatclass);
+        }
+    }
+    for (var j=0; j < course.winds.length; j++) {
+        var wind = course.winds[j];
+        var found = false;
+        for (var k=0; k < bscdata.winds.length; k++) {
+            if (wind == bscdata.winds[k]) {
+                found = true;
+            }
+        }
+        if (!found) {
+            bscdata.winds = bscdata.winds.concat(wind);
+        }
+    }
 }
