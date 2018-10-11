@@ -305,7 +305,9 @@ for (var i = 0; i < bscdata.marks.length; i++) {
 }
 
 bscdata.classes = new Array();
+bscdata.selectedclasses = new Array();
 bscdata.winds = new Array();
+bscdata.selectedwind = null;
 for (var i=0; i < bscdata.courses.length; i++) {
     var course = bscdata.courses[i];
     for (var j=0; j < course.classes.length; j++) {
@@ -332,4 +334,8 @@ for (var i=0; i < bscdata.courses.length; i++) {
             bscdata.winds = bscdata.winds.concat(wind);
         }
     }
+}
+
+if (bscdata.winds.length > 0) {
+    bscdata.selectedwind = bscdata.winds[1]
 }
