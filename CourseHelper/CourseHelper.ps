@@ -1,7 +1,7 @@
 %!PS-Adobe-2.0
 %%Creator: Daniel Marlay
 %%Title: Mark laying helper
-%%Pages: 3
+%%Pages: 2
 %%PageOrder: Ascend
 %%BoundingBox: 20 25 558 775
 %%EndComments
@@ -361,16 +361,16 @@
 %%EndProlog
 %%BeginSetup
 %%EndSetup
+% %%Page: 1 1
+
+%% assume 8.5x11 page, squeeze two sets in
+%half
+%8.5 72 mul -20 add 11 72 mul 2 add translate 180 rotate
+%half
+%showpage
+
+
 %%Page: 1 1
-
-% assume 8.5x11 page, squeeze two sets in
-half
-8.5 72 mul -20 add 11 72 mul 2 add translate 180 rotate
-half
-showpage
-
-
-%%Page: 2 2
 % print two separate pages with each ring as large as possible
 gsave
 currentpagedevice /PageSize get aload pop
@@ -382,7 +382,7 @@ gsave
 insidering
 showpage
 
-%%Page: 3 3
+%%Page: 2 2
 grestore
 outsidering
 showpage
