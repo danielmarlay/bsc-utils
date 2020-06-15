@@ -133,292 +133,6 @@
 	grestore
 } def
 
-/easscale {
-	gsave
-
-	% Standard atmosphere density ratio indexed by thousands of feet
-	% so entry at position 3 is ratio for 3000 feet.
-	% See https://www.digitaldutch.com/atmoscalc/table.htm for source
-	% lapse rate is -1.98 up to 36000ft (see https://en.wikipedia.org/wiki/International_Standard_Atmosphere )
-	/densityratio [	1.0000  % 0 ft
-					0.9711
-					0.9428
-					0.9151
-					0.8881
-					0.8617
-					0.8359	% 6,000ft
-					0.8106
-					0.7860
-					0.7620
-					0.7385
-					0.7156	% 11,000ft
-					0.6932
-					0.6713
-					0.6500
-					0.6292
-					0.6090 % 16,000 ft
-					0.5892
-					0.5699
-					0.5511
-					0.5328
-					0.5150	% 21,000 ft
-					0.4976
-					0.4806
-					0.4642
-					0.4481
-					0.4325	% 26,000 ft
-					0.4173
-					0.4025
-					0.3881
-					0.3741
-					0.3605	% 31,000 ft
-					0.3473
-					0.3345
-					0.3220
-					0.3099
-					0.2981	% 36,000 ft
-					0.2844
-					0.2710
-					0.2583
-					0.2462
-					] def
-	
-
-	0 1 densityratio length 1 sub {
-		% Calculate the position of the density altitude tick
-		/alt exch def
-		/shownum alt 5 mod 0 eq def
-		/bigdash shownum def
-		/angpos densityratio alt get log 360 mul 2 div DAOffsetPos add neg def
-
-		angpos DArfrac alt false shownum drawsubdash
-
-		% Calculate the angular rotation around the OAT scale at this density altitude
-		/OATinC 15 alt -1.98 mul sub def
-		/OATinK OATinC 273.15 add def
-		OATinK % OAT at density altitude
-		273.15 15 add % OAT at 0ft
-		div sqrt % sqrt of the temperature ratio
-		log 360 mul % convert to angular rotation for log scale
-
-		angpos add % angular position for pressure altitude mark
-		0.55 %radius fraction for OAT scale window
-		alt
-		true % draw dashes in the inside position
-		shownum
-		drawsubdash
-
-	} for
-
-
-	grestore
-} def
-
-/easwindow {
-	gsave
-	/angwid 20 def
-	/windowwidth 0.15 def
-
-	DAOffsetPos neg DArfrac 0 true false drawsubdash
-
-	DAOffsetPos rotate
-	
-	0 0 radius DArfrac mul angwid 2 div neg 90 add angwid 2 div 90 add arc stroke
-	0 0 radius DArfrac windowwidth add mul angwid 2 div neg 90 add angwid 2 div 90 add arc stroke
-
-	gsave
-	angwid 2 div neg rotate
-	0 radius DArfrac mul moveto
-	0 radius windowwidth mul rlineto stroke
-	grestore
-
-	gsave
-	angwid 2 div rotate
-	0 radius DArfrac mul moveto
-	0 radius windowwidth mul rlineto stroke
-	grestore
-
-	gsave
-	0 radius DArfrac 0.05 sub mul moveto
-	%-90 rotate
-	minifont setfont
-	(Density )
-	dup stringwidth pop neg 0 rmoveto show
-	( Alt.) show
-	grestore
-
-	grestore
-} def
-
-
-% Info for mach calculations (from https://aerotoolbox.net/airspeed-conversions/)
-%
-% TAS = M.a, where M = mach number and a = sonic speed
-%   a = sqrt(gamma * R * T)
-%       gamma = ratio of specific heats = 1.4 for air
-%       R = universal Gas Constant for air 287.053 J/kgK
-%       T = temperature in Kelvin 0C = 273.15K
-% so to get Mach on inner ring with TAS on outer ring
-% TAS / M = a / 1
-% log(a) = log(sqrt(gamma * R * T))
-%        = 1/2 * (log(gamma) + log(R) + log(T))
-%        = 1/2 * (log(gamma) + log(R)) + 1/2 * log(T)
-
-
-/OATscale {
-	gsave
-	
-	/windowwidth 0.1 def
-
-	% Calculate how the rings should be positioned at sealeve
-	% OAT = 15C
-	% Speed of sound = 340.294 m/s
-	% 1852m per nm
-
-	340.294 60 60 mul mul 1852 div % Sea level speed of sound in kts
-	log 1.0 sub 360 mul % how many degrees around the outer scale to rotate to get to this tick mark
-	% so figure on the stack is how far around we need to rotate the "Mach" index from the
-	% normal OAT = 15 position
-	% Calculate the reference position for 15degC at Density altitude = 0
-	DAOffsetPos neg
-	add % Add the two together to get the total rotation
-	neg % Negate because PostScript rotations are anticlockwise +ve and we are interpreting +ve as clockwise
-
-
-	rotate
-	0 radius OATrfrac mul moveto
-	0 radius windowwidth 2 div mul neg rlineto stroke
-	0 radius OATrfrac windowwidth sub mul moveto
-	microfont setfont
-	(MACH NO IDX)
-	dup stringwidth pop 2 div neg 0 rmoveto show % Show centered
-
-	grestore
-} def
-
-
-
-
-/OATwindow {
-	gsave
-	/angwid 30 def
-	/windowwidth 0.15 def
-	/minoffset 10000 def
-	/maxoffset -10000 def
-
-
-	gsave
-	0.25 setlinewidth
-
-	-70 5 50 {
-		/OATinC exch def
-
-		/OATinK OATinC 273.15 add def
-
-
-		% Calculate the angular rotation around the OAT scale for this temperature
-		OATinK % OAT at density altitude
-		273.15 15 add % OAT at 0ft
-		div sqrt % sqrt of the temperature ratio
-		log 360 mul % convert to angular rotation for log scale
-		neg % set the sign of the rotation correctly
-
-		% Calculate the reference position for 15degC at Density altitude = 0
-		DAOffsetPos neg
-
-		add % combine the two rotations
-		/angpos exch def % and store as angpos
-
-		/shownum OATinC 50 mod 0 eq def
-		/bigdash OATinC 10 mod 0 eq def
-
-		angpos cvi 360 mod maxoffset gt {/maxoffset angpos def} if
-		angpos cvi 360 mod minoffset lt {/minoffset angpos def} if
-
-		angpos OATrfrac OATinC false shownum drawsubdash
-	} for
-
-	grestore
-	
-	0 0 radius OATrfrac mul 90 maxoffset sub 90 minoffset sub arc stroke
-	0 0 radius OATrfrac windowwidth sub mul 90 maxoffset sub 90 minoffset sub arc stroke
-
-	gsave
-	minoffset neg rotate
-	0 radius OATrfrac mul moveto
-	0 radius windowwidth mul neg rlineto stroke
-	grestore
-
-	gsave
-	maxoffset neg rotate
-	0 radius OATrfrac mul moveto
-	0 radius windowwidth mul neg rlineto stroke
-	grestore
-
-	gsave
-		minoffset neg rotate
-		0 radius OATrfrac windowwidth 2 div sub mul moveto
-		minifont setfont
-		(Pressure )
-		dup stringwidth pop neg 0 rmoveto show
-	grestore
-
-	gsave
-		maxoffset neg rotate
-		0 radius OATrfrac windowwidth 2 div sub mul moveto
-		minifont setfont
-		( Altitude)
-		show
-		0 radius OATrfrac windowwidth 2 div add mul moveto
-		(OAT)
-		show
-	grestore
-
-	grestore
-} def
-
-/ratemark {
-	gsave
-	60 logrotate
-	/w numfont setfont (60) stringwidth pop minifont setfont (RATE) stringwidth pop max 4 add bigdashsize 2 mul max def
-	/h numfontsize minifontsize add def
-	newpath
-		0 radius bigdashsize sub moveto
-		w 2 div neg bigdashsize neg rlineto
-		0 h neg rlineto
-		w 0 rlineto
-		0 h rlineto
-	closepath fill
-	1.0 setgray
-	numfont setfont
-	(60) dup stringwidth pop 2 div neg
-	radius bigdashsize 2 mul sub numfontsize sub 2 add moveto
-	show
-	minifont setfont
-	(RATE) dup stringwidth pop 2 div neg
-	radius bigdashsize 2 mul numfontsize add sub minifontsize sub 2 add moveto
-	show
-	grestore
-} def
-
-/onemark {
-	gsave
-	10 logrotate
-	/w numfont setfont (10) stringwidth pop 2 add def
-	newpath
-		w 2 div 0.5 sub neg
-		inside
-			{ radius bigdashsize sub numfontsize sub }
-			{ radius bigdashsize add 2 sub }
-		ifelse 0.5 add
-		moveto
-		w 0 rlineto
-		0 numfontsize rlineto
-		w neg 0 rlineto
-	closepath
-	stroke
-	grestore
-} def
 
 /ring { 
 	newpath 0 0 moveto 0 0 1.5 0 360 arc fill
@@ -448,36 +162,6 @@
 	} for
 } def
 
-% each set of units is a collection of factors.  pick a base unit, which
-% should be the largest (numerical) unit and an angle offset for that unit
-% to be placed at.  Then add all of the rest of the units.  The factor
-% associated with each unit is the number by which you multiply the BASE
-% unit to get the new unit.
-%
-% Since the angle offset can be anything, you just select one which which
-% places the arrows at convenient places.  Making the important unit arrows
-% line up with index marks on the wheel is handy for the user.
-
-/units {
-	23.8	% angle of 1st unit
-	dup 1 (IMP. GAL) labelconv
-	dup 1.20095 (US GAL) labelconv
-	dup 4.546 (LITRES) labelconv
-	% note that the two below have the US GAL factor added in because
-	% the base unit is IMPERIAL gallons to make all factors come out
-	% between 1.0 and 9.999...
-	dup 6 1.20095 mul (FUEL LBS) labelconv	% The FAA value
-	dup 7.5 1.20095 mul (OIL LBS) labelconv	% The FAA value
-	pop
-
-	189	% angle of 1st unit
-	dup 1 (NAUT MILES) labelconv
-	dup 1.1507 (STAT MILES) labelconv
-	dup 1.852 (KM) labelconv
-	dup 6.0761 (FT) labelconv
-	pop
-
-} def
 
 /corporate-branding {
 	gsave
@@ -506,76 +190,30 @@
 /degscale 1.5 def
 /degbigdashsize bigdashsize 0.60 mul def
 
-/tempscale {
-	% centered on deg C
-	gsave
-	minifont setfont
-	0.4 setlinewidth
-
-	-50 1 50 {
-		/d exch def
-		/offs d degscale mul def
-		newpath
-			offs  0 moveto
-			0 degbigdashsize
-			d 10 mod 0 eq  d 5 mod 0 eq  or not { 0.6 mul } if
-			rlineto
-		stroke
-
-		d 10 mod 0 eq {
-			/tmp d 5 string cvs def
-			tmp stringwidth pop neg 2 div offs add
-			degbigdashsize 1 add
-			moveto
-			tmp show
-			d 50 mod 0 eq { (\312C) show } if
-		} if
-	} for
-	newpath -51 degscale mul 0 moveto 50 degscale mul 0 lineto stroke
-
-	-60 2 120 {
-		/d exch def
-		/offs d 32 sub 5 mul 9 div degscale mul def
-		newpath
-			offs 0 moveto
-			0 degbigdashsize
-			d 10 mod 0 eq not { 0.6 mul } if
-			neg
-			rlineto
-		stroke
-
-		d 20 mod 0 eq {
-			/tmp d 5 string cvs def
-			tmp stringwidth pop neg 2 div offs add
-			degbigdashsize neg minifontsize sub 1 add
-			moveto
-			tmp show
-			d 60 mod 0 eq { (\312F) show } if
-		} if
-	} for
-	newpath -50 degscale mul 0 moveto 50 degscale mul 0 lineto stroke
-	grestore
-} def
 
 /insidering {
-	/inside true def
-
-	ring
-
-	0 0 radius 1 add 0 360 arc stroke % draw template outline
 	gsave
-	[1 5] 0 setdash
-	0 0 radius 5 div 0 360 arc stroke % draw template outline
+	0 0 radius 1 add 0 360 arc stroke % draw template outline
+	% 0 0 radius 5 div 0 360 arc stroke  % inner circle
+	0 0 1.5 0 360 arc fill % pin hole position
 	grestore
-      0 30 360 { % Go from 0 to 360 degrees in 30 degree steps 
-		newpath % Start a new path 
-		gsave % Keep rotations temporary 
-		0 0 moveto 
-		rotate % Rotate by degrees on stack from 'for' 
-		radius 5 div 0 rlineto stroke 
-		grestore % Get back the unrotated state 
-	} for % Iterate over angles 
 
+	%/inside true def
+	%ring
+
+	% Code below draws the dashed cutting template for origami hinge
+	%gsave
+	%[1 5] 0 setdash
+	%0 0 radius 5 div 0 360 arc stroke % draw template outline
+	%grestore
+    %  0 30 360 { % Go from 0 to 360 degrees in 30 degree steps 
+	%	newpath % Start a new path 
+	%	gsave % Keep rotations temporary 
+	%	0 0 moveto 
+	%	rotate % Rotate by degrees on stack from 'for' 
+	%	radius 5 div 0 rlineto stroke 
+	%	grestore % Get back the unrotated state 
+	%} for % Iterate over angles 
 } def
 
 /outsidering {
@@ -583,7 +221,7 @@
 	ring
 
 	0 0 radius 28 add 0 360 arc stroke % outer circle
-	0 0 radius 5 div 0 360 arc stroke  % inner circle
+	%0 0 radius 5 div 0 360 arc stroke  % inner circle
 } def
 
 /half {
