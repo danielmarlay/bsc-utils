@@ -198,6 +198,33 @@
 	0 0 1.5 0 360 arc fill % pin hole position
 	grestore
 
+	% Draw the figure eight course
+	gsave
+	/coursescale 0.6 def
+	0 0 moveto % Start at the origin
+	% Mark 1 - windward mark
+	radius coursescale mul 0 sin mul %x
+	radius coursescale mul 0 cos mul %y
+	lineto
+	% Mark 2 - first wing mark
+	radius coursescale mul 300 sin mul %x
+	radius coursescale mul 300 cos mul %y
+	lineto
+	% Mark 3 - second wing mark
+	radius coursescale mul 120 sin mul %x
+	radius coursescale mul 120 cos mul %y
+	lineto
+	% Mark 4 - leeward mark
+	radius coursescale mul 180 sin mul %x
+	radius coursescale mul 180 cos mul %y
+	lineto
+	% back to centre
+	0 0 lineto
+	stroke
+	grestore
+
+	
+
 	%/inside true def
 	%ring
 
