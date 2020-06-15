@@ -223,7 +223,70 @@
 	stroke
 	grestore
 
-	
+	% Add the mark labels
+	numfont setfont
+	% Mark 1
+	gsave
+	0 rotate
+	/tmp (Mark 1) def
+	tmp stringwidth pop 2 div neg
+	radius coursescale mul numfontsize add
+	moveto
+	tmp show
+	0 radius coursescale mul numfontsize 2 mul add moveto
+	[1 5] 0 setdash
+	0 radius 1 add lineto
+	stroke
+	grestore
+	% Mark 2
+	gsave
+	300 neg rotate
+	/tmp (Mark 2) def
+	tmp stringwidth pop 2 div neg
+	radius coursescale mul numfontsize add
+	moveto
+	tmp show
+	0 radius coursescale mul numfontsize 2 mul add moveto
+	[1 5] 0 setdash
+	0 radius 1 add lineto
+	stroke
+	grestore
+	% Mark 3
+	gsave
+	120 neg rotate
+	/tmp (Mark 3) def
+	tmp stringwidth pop 2 div neg
+	radius coursescale mul numfontsize add
+	moveto
+	tmp show
+	0 radius coursescale mul numfontsize 2 mul add moveto
+	[1 5] 0 setdash
+	0 radius 1 add lineto
+	stroke
+	grestore
+	% Mark 4
+	gsave
+	180 neg rotate
+	/tmp (Mark 4) def
+	tmp stringwidth pop 2 div neg
+	radius coursescale mul numfontsize add
+	moveto
+	tmp show
+	0 radius coursescale mul numfontsize 2 mul add moveto
+	[1 5] 0 setdash
+	0 radius 1 add lineto
+	stroke
+	grestore
+
+	% Add the final alignment lines / indexer
+	gsave
+	60 neg rotate
+	0 radius 1 add neg moveto
+	[1 5] 0 setdash
+	0 radius 1 add lineto
+	stroke
+	grestore
+
 
 	%/inside true def
 	%ring
