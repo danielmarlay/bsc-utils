@@ -422,44 +422,30 @@
 
 /ring { 
 	newpath 0 0 moveto 0 0 1.5 0 360 arc fill
-	10 1 99 {
+	5 5 360 {
 		/n exch def
-		/shownum n 25 le   n 60 le n 5 mod 0 eq and   n 10 mod 0 eq  				or or def
-		/bigdash n 60 lt   n 5 mod 0 eq   or def
+		/shownum n 10 mod 0 eq def
+		/bigdash n 10 mod 0 eq def
 
-		/shownum shownum   n 60 eq inside and not  and def
-
-		debug {
-			bigdash { (--- ) } { ( -- ) } ifelse print
-			shownum { n 3 string cvs print } if
-			(\n) print
+		gsave
+		n neg rotate
+		newpath
+		0 radius moveto
+		0 bigdashsize bigdash not { 2 div } if rlineto
+		stroke
+		shownum {
+			numfont setfont
+			/tmp n 5 string cvs def
+			tmp stringwidth pop 2 div neg
+			inside
+				{ radius bigdashsize 2 sub sub numfontsize sub }
+				{ radius bigdashsize add }
+			ifelse
+			moveto
+			tmp show
 		} if
-
-		/v n def
-		drawdash
-
-		n 15 lt
-			{ 1 1 9 }
-			{ n 30 lt
-				{ 2 2 8 }
-				{ n 60 lt { 5 5 5 } { 1 1 -1 } ifelse }
-				ifelse
-			} ifelse
-
-		/shownum false def
-		/smallest 2 index def
-		{
-			/f exch def
-			/bigdash f smallest ne f 5 eq and def
-			/v f 10 div n add def
-			debug {
-				bigdash { ( -- ) } { (  - ) } ifelse print
-				v 6 string cvs print (\n) print
-			} if
-			drawdash
-		} for
+		grestore
 	} for
-	onemark
 } def
 
 % each set of units is a collection of factors.  pick a base unit, which
@@ -574,17 +560,7 @@
 /insidering {
 	/inside true def
 
-	0 30 (KEAS) labelconv
-	0 36 (R) labelconv
-	0 35 (T) labelconv
-	0 34 (D) labelconv
-
 	ring
-	ratemark
-	easwindow
-	OATwindow
-	%gsave 0 -50 translate tempscale grestore
-	gsave 0 radius 20 sub bigdashsize sub numfontsize sub minifontsize 11 mul sub neg translate corporate-branding grestore
 
 	0 0 radius 1 add 0 360 arc stroke % draw template outline
 	gsave
@@ -605,10 +581,6 @@
 /outsidering {
 	/inside false def
 	ring
-	% units
-
-	easscale
-	OATscale
 
 	0 0 radius 28 add 0 360 arc stroke % outer circle
 	0 0 radius 5 div 0 360 arc stroke  % inner circle
@@ -654,6 +626,9 @@
 
 
 } def
+
+
+
 
 %%EndProlog
 %%BeginSetup
